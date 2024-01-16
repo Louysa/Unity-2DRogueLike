@@ -8,22 +8,24 @@ using UnityEngine.SceneManagement;
 public class Player : MovingObject
 {
     public int wallDamage = 1;
-    public  int pointsForFood = 10;
-    public int pointsForSoda = 20;
+    public  int pointsForFood = 20;
+    public int pointsForSoda = 40;
     public float restartLevelDelay = 1f;
 
+    private bool skipMove;
+
+    
     public  Text foodText;
     public Text levelText;
     private Animator animator;
 
-    public  int food = 100;
+    public  int food = 1000;
 
-    private bool isMoving;
     protected override void Start()
     {
-        animator = GetComponent<Animator>();
+        animator = GetComponent<Animator>();    
         food = GameManager.instance.playerFoodPoint;
-
+    
         foodText.text = "Food: " + food;
         base.Start();
     }
@@ -38,8 +40,13 @@ public class Player : MovingObject
         food--;
         foodText.text = "Food: " + food;
 
-        
+        if (skipMove)
+        {
+            skipMove = false;
+            return;
+        }
         base.AttemptMove<T>(xDir,yDir);
+        skipMove = true;
 
         RaycastHit2D hit;
         CheckIfGameOver();
@@ -52,17 +59,19 @@ public class Player : MovingObject
         if(food <= 0)
             GameManager.instance.GameOver();
     }
-    
+
+   
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Finish"))
         {
-            Debug.Log("You hit Exit!");
+            //GameManager.level++;
+            Debug.Log("Level now: " + GameManager.level);
             Invoke("Restart", restartLevelDelay);
             enabled = false;
         }else if (other.gameObject.CompareTag("Food"))
         {
-            Debug.Log("You hit Food!");
 
             food += pointsForFood;
             foodText.text = "+ " + pointsForFood + " Food: "+ food;
@@ -71,12 +80,11 @@ public class Player : MovingObject
             
         }else if (other.gameObject.CompareTag("Soda"))
         {
-            Debug.Log("You hit Soda!");
-
             food += pointsForSoda;
             foodText.text = "+ " + pointsForSoda + " Food: "+ pointsForSoda;
             other.gameObject.SetActive(false);
         }
+        
     }  
 
     protected override void OnCantMove<T>(T component)

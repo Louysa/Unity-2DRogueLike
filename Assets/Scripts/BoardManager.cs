@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 using Random = UnityEngine.Random;  
 public class BoardManager : MonoBehaviour
@@ -88,6 +89,7 @@ public class BoardManager : MonoBehaviour
         LayoutObjectAtRandom(innerWallTiles,wallCount.minimum,wallCount.maximum);
         LayoutObjectAtRandom(foodTiles,foodCount.minimum,foodCount.maximum);
         int enemyCount = (int)Math.Log(level,2f);
+        Debug.Log(enemyCount);
         LayoutObjectAtRandom(enemyTiles,enemyCount,enemyCount);
         Instantiate(exit,new Vector3(columns-1,rows-1,0f),Quaternion.identity);
         

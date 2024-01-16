@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Enemy : MovingObject
@@ -9,14 +10,18 @@ public class Enemy : MovingObject
     public int playerDamage;
     private Animator animator;
     private Transform target;
+    private BoxCollider2D boxCollider2D;
     private bool skipMove;
-    private bool isMoving;
+    private GameObject playerObject = null;
+    
+   
 
     protected override void Start()
     {
         GameManager.instance.AddEnemyToList(this);
         animator = GetComponent<Animator>();
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        boxCollider2D = GetComponent<BoxCollider2D>();
+         playerObject = GameObject.FindGameObjectWithTag("Player");
 
         if (playerObject != null)
         {
@@ -28,7 +33,10 @@ public class Enemy : MovingObject
             Debug.LogError("Player object not found!");
         }
         base.Start();
-        
+    }
+
+    private void Update()
+    {
         
     }
 
@@ -60,26 +68,29 @@ public class Enemy : MovingObject
         AttemptMove<Player>(xDir,yDir);
     }
 
+    
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.CompareTag("Player"))
+       if (other.gameObject.CompareTag("Player"))
         {
+            
             Player hitPlayer = (Player) other.GetComponent<Player>();
             animator.SetTrigger("enemyAttack");
             hitPlayer.loseFood(playerDamage);
+            boxCollider2D.isTrigger = false;
         }
+
+       
+        
     }
 
      protected override void OnCantMove<T>(T component)
     {
-        Player hitPlayer = component as Player;
-
-        if (!isMoving)
-        {
-            animator.SetTrigger("enemyAttack");
-            hitPlayer.loseFood(playerDamage);
-        }
+       /* Player hitPlayer = component as Player;
+        animator.SetTrigger("enemyAttack");
+        hitPlayer.loseFood(playerDamage);
         
-        
+        */
+        Debug.Log("You are in Enemy OnCantMove");
     }  
 }

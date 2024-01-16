@@ -9,10 +9,11 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
 
+    public bool gameIsOn = false;
     public float levelStartsDelay = 2f;
     public float turnDelay = .1f;
     public BoardManager boardScript;
-    public  int level = 1;
+    public static int level = 0;
 
     public static GameManager instance = null;
 
@@ -42,26 +43,32 @@ public class GameManager : MonoBehaviour
         enemies = new List<Enemy>();
         boardScript = GetComponent<BoardManager>();
         
-        InitGame();
+      //  InitGame();
     }
     
      void OnEnable()
-    {
+     {
         //Tell our 'OnLevelFinishedLoading' function to start listening for a scene change as soon as this script is enabled.
         SceneManager.sceneLoaded += OnLevelFinishedLoading;
+       
     }
+     
         
     void OnDisable()
     {
-        //Tell our 'OnLevelFinishedLoading' function to stop listening for a scene change as soon as this script is disabled. Remember to always have an unsubscription for every delegate you subscribe to!
+        //Tell our 'OnLevelFinishedLoading' function
+        //to stop listening for a scene change as soon as this script is disabled. Remember to always have an unsubscription for every delegate you subscribe to!
         SceneManager.sceneLoaded -= OnLevelFinishedLoading;
+        
     }
       
    
     void OnLevelFinishedLoading(Scene scene, LoadSceneMode mode)
     {
         level++;
+        Debug.Log("Loaded level: "+ level);
         InitGame();
+       
     }
 
     
@@ -81,7 +88,7 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         //Set levelText to display number of levels passed and game over message
-        levelText.text = "After " + (level-1) + " days, you starved.";
+        levelText.text = "After " + level + " days, you starved.";
 
         //Enable black background image gameObject.
         levelImage.SetActive(true);
@@ -99,7 +106,7 @@ public class GameManager : MonoBehaviour
         
         levelText = GameObject.Find("LevelText").GetComponent<Text>();
         
-        levelText.text = "Day " + (level-1);
+        levelText.text = "Day " + level;
         
         levelImage.SetActive(true);
         
