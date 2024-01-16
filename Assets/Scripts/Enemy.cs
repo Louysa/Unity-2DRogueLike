@@ -34,11 +34,7 @@ public class Enemy : MovingObject
         }
         base.Start();
     }
-
-    private void Update()
-    {
-        
-    }
+    
 
     protected override void AttemptMove<T>(int xDir, int yDir)
     {
@@ -77,7 +73,7 @@ public class Enemy : MovingObject
             Player hitPlayer = (Player) other.GetComponent<Player>();
             animator.SetTrigger("enemyAttack");
             hitPlayer.loseFood(playerDamage);
-            boxCollider2D.isTrigger = false;
+            
         }
 
        

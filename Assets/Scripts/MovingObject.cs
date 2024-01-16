@@ -35,14 +35,17 @@ public abstract class MovingObject : MonoBehaviour
     hit = Physics2D.Linecast(start, end, blockingLayer);
     boxCollider2D.enabled = true;
 
-    if (end.x - start.x < 0)
-      spriteRenderer.flipX = true;
-    else
-      spriteRenderer.flipX = false;
+    
     
     if (hit.transform == null)
     {
       StartCoroutine(SmoothMovement(end));
+      
+      if (end.x - start.x < 0 )
+            spriteRenderer.flipX = true;
+      else if (end.x - start.x > 0)
+            spriteRenderer.flipX = false;
+      
       return true;
     }
 
@@ -58,8 +61,7 @@ public abstract class MovingObject : MonoBehaviour
     {
       return;
     }
-
-   
+    
     T hitComponent = hit.transform.GetComponent<T>();
     
     if (!canMove && hitComponent != null & !isMoving )
@@ -71,6 +73,7 @@ public abstract class MovingObject : MonoBehaviour
   protected IEnumerator SmoothMovement(Vector3 end)
   {
     isMoving = true;
+    boxCollider2D.enabled = false;
     float sqrRemainingDistance = (transform.position - end).sqrMagnitude;
     while (sqrRemainingDistance > float.Epsilon)
     {
@@ -81,6 +84,7 @@ public abstract class MovingObject : MonoBehaviour
       yield return null;
     }
     rigidbody2D.MovePosition(end);
+    boxCollider2D.enabled = true;
     isMoving = false;
   }
 
