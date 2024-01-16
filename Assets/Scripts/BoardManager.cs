@@ -18,6 +18,8 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    public Camera mainCamera;
+    
     public int columns = 8;
     public int rows = 8;
     public Count wallCount = new Count(5, 9);
@@ -84,11 +86,35 @@ public class BoardManager : MonoBehaviour
 
     public void SetupScene(int level)
     {
+        mainCamera = Camera.main;
+        
+        
+        if (level > 5)
+        {
+            wallCount = new Count(10, 18);
+            foodCount = new Count(3, 8);
+            columns = 16;
+            rows = 16;
+            if (mainCamera != null)
+            {
+                mainCamera.orthographicSize = 10f;
+                mainCamera.transform.position = new Vector3(columns / 2f - 0.5f, rows / 2f - 0.5f, -10f);
+            }
+            else
+            {
+                Debug.LogError("Main camera not found!");
+            }
+        }
         BoardSetup();
         InitalialiseList();
         LayoutObjectAtRandom(innerWallTiles,wallCount.minimum,wallCount.maximum);
         LayoutObjectAtRandom(foodTiles,foodCount.minimum,foodCount.maximum);
+        
         int enemyCount = (int)Math.Log(level,2f);
+        if (level > 5)
+            enemyCount = enemyCount * 3;
+            
+        
         Debug.Log(enemyCount);
         LayoutObjectAtRandom(enemyTiles,enemyCount,enemyCount);
         Instantiate(exit,new Vector3(columns-1,rows-1,0f),Quaternion.identity);

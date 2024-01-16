@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     public float levelStartsDelay = 2f;
     public float turnDelay = .1f;
     public BoardManager boardScript;
-    public static int level = 0;
+    public static int level = 5;
 
     public static GameManager instance = null;
 
