@@ -21,7 +21,7 @@ public class Enemy : MovingObject
         GameManager.instance.AddEnemyToList(this);
         animator = GetComponent<Animator>();
         boxCollider2D = GetComponent<BoxCollider2D>();
-         playerObject = GameObject.FindGameObjectWithTag("Player");
+        playerObject = GameObject.FindGameObjectWithTag("Player");
 
         if (playerObject != null)
         {
@@ -65,7 +65,7 @@ public class Enemy : MovingObject
             xDir = target.position.x > transform.position.x ? 1 : -1;
         }
         
-        AttemptMove<Player>(xDir,yDir);
+        AttemptMove<Enemy>(xDir,yDir);
     }
 
     

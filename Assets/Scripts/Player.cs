@@ -12,18 +12,22 @@ public class Player : MovingObject
     public int pointsForSoda = 40;
     public float restartLevelDelay = 1f;
 
+    
+    
     private bool skipMove;
 
     
     public  Text foodText;
     public Text levelText;
     private Animator animator;
+    private SpriteRenderer spriteRenderer;
 
     public  int food = 1000;
 
     protected override void Start()
     {
-        animator = GetComponent<Animator>();    
+        animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         food = GameManager.instance.playerFoodPoint;
     
         foodText.text = "Food: " + food;
@@ -123,6 +127,9 @@ public class Player : MovingObject
         
         if(horizontal != 0 || vertical != 0)
             AttemptMove<Wall>(horizontal,vertical);
-        
+
+
+       
+
     }
 }
