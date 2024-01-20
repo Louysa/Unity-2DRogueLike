@@ -9,6 +9,6 @@ I created this [game](https://learn.unity.com/project/2d-roguelike-tutorial?uv=5
 
 
 ## TODO
-1.Improve Enemy Movement
-1.Improve Player-Enemy Interaction
+1. Improve Enemy Movement
+1. Improve Player-Enemy Interaction
 
