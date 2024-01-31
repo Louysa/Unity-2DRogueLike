@@ -139,10 +139,14 @@ public class GameManager : MonoBehaviour
         {
             enemies[i].MoveEnemy();
             yield return new WaitForSeconds(turnDelay);
+            while (enemies[i].isMoving)
+            {
+                yield return null;
+            }
         }
-
-        playersTurn = true;
         enemiesMoving = false;
+        playersTurn = true;
+        
         
     }
 }

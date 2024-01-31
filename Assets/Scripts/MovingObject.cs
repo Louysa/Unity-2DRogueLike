@@ -13,7 +13,7 @@ public abstract class MovingObject : MonoBehaviour
   private Rigidbody2D rigidbody2D;
   private SpriteRenderer spriteRenderer;
   private float inverseMoveTime;
-  private bool isMoving;
+  public bool isMoving;
   
   
 
@@ -37,7 +37,7 @@ public abstract class MovingObject : MonoBehaviour
 
     
     
-    if (hit.transform == null)
+    if (hit.transform == null && !isMoving)
     {
       StartCoroutine(SmoothMovement(end));
       
@@ -64,9 +64,9 @@ public abstract class MovingObject : MonoBehaviour
     
     T hitComponent = hit.transform.GetComponent<T>();
     
-    if (!canMove && hitComponent != null & !isMoving )
+    if (!canMove && hitComponent != null && !isMoving )
     {
-      OnCantMove(hitComponent);
+      OnCantMove(hitComponent); 
     }
   }
   
@@ -77,10 +77,13 @@ public abstract class MovingObject : MonoBehaviour
     float sqrRemainingDistance = (transform.position - end).sqrMagnitude;
     while (sqrRemainingDistance > float.Epsilon)
     {
+      rigidbody2D.MovePosition(end);
+      isMoving = false;
       Vector3 newPosition = Vector3.MoveTowards(rigidbody2D.position, end, inverseMoveTime * Time.deltaTime);
 
       rigidbody2D.MovePosition(newPosition);
       sqrRemainingDistance = (transform.position - end).sqrMagnitude;
+      isMoving = true;
       yield return null;
     }
     rigidbody2D.MovePosition(end);

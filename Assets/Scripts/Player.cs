@@ -12,22 +12,24 @@ public class Player : MovingObject
     public int pointsForSoda = 40;
     public float restartLevelDelay = 1f;
 
-    
-    
-    private bool skipMove;
-
+    public AudioClip moveSound1;
+    public AudioClip moveSound2;
+    public AudioClip eatSound1;
+    public AudioClip eatSound2;
+    public AudioClip drinkSound1;
+    public AudioClip drinkSound2;
+    public AudioClip gameOverSound;
     
     public  Text foodText;
-    public Text levelText;
-    private Animator animator;
-    private SpriteRenderer spriteRenderer;
 
+    private bool isMoving;
+    private Animator animator;
+    private Animator enemyAnimator;
     public  int food = 1000;
 
     protected override void Start()
     {
         animator = GetComponent<Animator>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
         food = GameManager.instance.playerFoodPoint;
     
         foodText.text = "Food: " + food;
@@ -43,25 +45,30 @@ public class Player : MovingObject
     {
         food--;
         foodText.text = "Food: " + food;
-
-        if (skipMove)
-        {
-            skipMove = false;
-            return;
-        }
+        
         base.AttemptMove<T>(xDir,yDir);
-        skipMove = true;
+        
 
         RaycastHit2D hit;
+
+        if (Move(xDir, yDir, out hit))
+        {   
+            SoundManager.instance.randomizeSfx(moveSound1,moveSound2);
+        }
+
         CheckIfGameOver();
         GameManager.instance.playersTurn = false;
-        
     }
 
     private void CheckIfGameOver()
     {
-        if(food <= 0)
+        if (food <= 0)
+        {
+            SoundManager.instance.playSingle(gameOverSound);
+            SoundManager.instance.musicSource.Stop();
             GameManager.instance.GameOver();
+        }
+            
     }
 
    
@@ -70,8 +77,6 @@ public class Player : MovingObject
     {
         if (other.gameObject.CompareTag("Finish"))
         {
-            //GameManager.level++;
-            Debug.Log("Level now: " + GameManager.level);
             Invoke("Restart", restartLevelDelay);
             enabled = false;
         }else if (other.gameObject.CompareTag("Food"))
@@ -79,13 +84,14 @@ public class Player : MovingObject
 
             food += pointsForFood;
             foodText.text = "+ " + pointsForFood + " Food: "+ food;
-
+            SoundManager.instance.randomizeSfx(eatSound1,eatSound2);
             other.gameObject.SetActive(false);
             
         }else if (other.gameObject.CompareTag("Soda"))
         {
             food += pointsForSoda;
             foodText.text = "+ " + pointsForSoda + " Food: "+ pointsForSoda;
+            SoundManager.instance.randomizeSfx(drinkSound1,drinkSound2);
             other.gameObject.SetActive(false);
         }
         
@@ -127,9 +133,6 @@ public class Player : MovingObject
         
         if(horizontal != 0 || vertical != 0)
             AttemptMove<Wall>(horizontal,vertical);
-
-
-       
 
     }
 }

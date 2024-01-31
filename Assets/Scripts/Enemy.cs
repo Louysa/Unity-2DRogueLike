@@ -13,14 +13,15 @@ public class Enemy : MovingObject
     private BoxCollider2D boxCollider2D;
     private bool skipMove;
     private GameObject playerObject = null;
+
+    public AudioClip enemyAttack1;
+    public AudioClip enemyAttack2;
     
-   
 
     protected override void Start()
     {
         GameManager.instance.AddEnemyToList(this);
         animator = GetComponent<Animator>();
-        boxCollider2D = GetComponent<BoxCollider2D>();
         playerObject = GameObject.FindGameObjectWithTag("Player");
 
         if (playerObject != null)
@@ -43,7 +44,10 @@ public class Enemy : MovingObject
             skipMove = false;
             return;
         }
+
+        Debug.Log("Enemy is trying to move!");
         base.AttemptMove<T>(xDir,yDir);
+        Debug.Log("Enemy moved!");
         skipMove = true;
         
     }
@@ -54,39 +58,25 @@ public class Enemy : MovingObject
         int yDir = 0;
         if (Math.Abs(target.position.x - transform.position.x) < float.Epsilon)
         {
-            yDir = target.position.y > transform.position.y ? 1 : -1;
+            yDir = target.position.x > transform.position.x ? 1 : -1;
         }
         else
         {
             xDir = target.position.x > transform.position.x ? 1 : -1;
         }
         
-        AttemptMove<Enemy>(xDir,yDir);
+        AttemptMove<Player>(xDir,yDir);
     }
-
     
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-       if (other.gameObject.CompareTag("Player"))
-        {
-            
-            Player hitPlayer = (Player) other.GetComponent<Player>();
-            animator.SetTrigger("enemyAttack");
-            hitPlayer.loseFood(playerDamage);
-            
-        }
-
-       
-        
-    }
-
      protected override void OnCantMove<T>(T component)
     {
-       /* Player hitPlayer = component as Player;
-        animator.SetTrigger("enemyAttack");
+        Player hitPlayer = component as Player;
         hitPlayer.loseFood(playerDamage);
+        animator.SetTrigger("enemyAttack");
         
-        */
+        SoundManager.instance.randomizeSfx(enemyAttack1,enemyAttack2);
+        
+        
         Debug.Log("You are in Enemy OnCantMove");
     }  
 }
