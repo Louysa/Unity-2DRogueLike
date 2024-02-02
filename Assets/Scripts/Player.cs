@@ -22,14 +22,16 @@ public class Player : MovingObject
     
     public  Text foodText;
 
-    private bool isMoving;
+    
     private Animator animator;
+    private BoxCollider2D boxCollider2D;
     private Animator enemyAnimator;
     public  int food = 1000;
 
     protected override void Start()
     {
         animator = GetComponent<Animator>();
+        boxCollider2D = GetComponent<BoxCollider2D>();
         food = GameManager.instance.playerFoodPoint;
     
         foodText.text = "Food: " + food;
@@ -57,7 +59,13 @@ public class Player : MovingObject
         }
 
         CheckIfGameOver();
+        
         GameManager.instance.playersTurn = false;
+    }
+
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        boxCollider2D.enabled = true;
     }
 
     private void CheckIfGameOver()
@@ -99,6 +107,7 @@ public class Player : MovingObject
 
     protected override void OnCantMove<T>(T component)
     {   
+        
         Wall hitwall = component as Wall;
         hitwall.DamageWall(wallDamage);
         animator.SetTrigger("playerChop");
